@@ -11,10 +11,12 @@ from selenium.webdriver.common.action_chains import ActionChains
 import os
 import base64
 
+
 account_data_file = "database/black_account_data.txt"      #файл с логином и паролем в формате logg:pass в первой строчке
 json_filename = "database/titles_group.json"               #Названия групп из которых берем подписки
 post_text = "#casino #free #help\ntake free spins from my referral please https://betworld.cc/go/2a5f10f7bd15426b268ae4242aaa9b3e365b64d1eb0a0b0b/"
 s = Service(executable_path="webdriver/chromedriver.exe")  # расположение драйвера хрома
+
 
 def main():
     while True:
@@ -23,6 +25,7 @@ def main():
         group_followers(json_file_data[0]['User']['Group'])
         movie_by_following()
         time.sleep(60*60*3)
+
 
 def open_twitter(account_data):
     time.sleep(5)
@@ -55,6 +58,7 @@ def open_twitter(account_data):
         file.close()
         driver.quit()
 
+
 def create_image_post(window_post):
     time.sleep(1)
     ActionChains(driver).send_keys(Keys.ESCAPE).perform()
@@ -68,6 +72,7 @@ def create_image_post(window_post):
     ActionChains(driver).move_to_element(file_img).click().perform()
     time.sleep(5)
     file_img.send_keys(file_path)
+
 
 def create_post(text):
     button_post = driver.find_element(By.XPATH, "//a[@data-testid='SideNav_NewTweet_Button']")
@@ -91,16 +96,19 @@ def create_post(text):
     window_post.find_element(By.XPATH, "//div[@data-testid='tweetButton']").click()
     time.sleep(5)
 
+
 def delete_bot_link(link):
     with open('database/subscription_list.txt', 'r') as file:
         data = file.read().replace(link, '')
     with open('database/subscription_list.txt', 'w') as file:
         file.write(data)
 
+
 def save_human_link(link):
     link_file = open('database/human_list.txt', 'a')
     link_file.write(link)
     link_file.close()
+
 
 def check_on_bot(post, user_link):
     popa = post.find_element(By.XPATH, "//div[contains(@class, 'css-1dbjc4n r-13awgt0 r-18u37iz r-1w6e6rj')]").text
@@ -122,8 +130,9 @@ def check_on_bot(post, user_link):
         delete_bot_link(user_link)
         return True    #аккаунт бот
     else:
-        if following_number / followers_number <= 4: save_human_link(user_link)
+        if followers_number / following_number <= 4: save_human_link(user_link)
         return False  #аккаунт не бот
+
 
 def open_file_json(fileName):
     file = fileName
@@ -131,9 +140,11 @@ def open_file_json(fileName):
         data = json.loads(f.read())
     return data
 
+
 def random_wait(min, max):
     random_time = random.randint(min, max)
     time.sleep(random_time)
+
 
 def create_like(post):
     likes = post.find_element(By.XPATH, "//div[@data-testid='like']")
@@ -176,6 +187,7 @@ def find_posts_by_hashtag(hashtag):
     posts = driver.find_elements(By.XPATH, "//article[@data-testid='tweet']")
     return posts
 
+
 def take_text_from_post(post):
     text_label = post.find_element(By.XPATH, "//div[@data-testid='tweetText']")
     list_text_tweet = []
@@ -184,6 +196,7 @@ def take_text_from_post(post):
         list_text_tweet.append(list_text[i].text)
     textTweet = ' '.join(list_text_tweet)
     return textTweet
+
 
 def check_generation_available():
     file = open("database/generation_busy.txt", 'r')
@@ -195,10 +208,12 @@ def check_generation_available():
         file.close()
         return True
 
+
 def take_generation_place():
     file = open("database/generation_busy.txt", 'a')
     file.write("took\n")
     file.close()
+
 
 def get_out_of_queue_generation():
     file = open("database/generation_busy.txt", 'r')
@@ -209,6 +224,7 @@ def get_out_of_queue_generation():
     for i in range(len(string_list)):
         if i < len(string_list) - 1: file.write(string_list[i])
     file.close()
+
 
 def create_reply(post):
     random_wait(4, 7)
@@ -228,6 +244,7 @@ def create_reply(post):
     button_reply = driver.find_element(By.XPATH, "//div[@data-testid='tweetButton']")
     driver.execute_script("arguments[0].click();", button_reply)
     random_wait(4, 7)
+
 
 def movie_by_following():
     movie_counter = random.randint(70,120)
@@ -250,11 +267,13 @@ def movie_by_following():
             delete_bot_link(user_link)
             continue
 
+
 def take_user_link():
     with open('database/subscription_list.txt', 'r') as f:
         link_file = f.readlines()
     random_user = random.randint(0, len(link_file)-1)
     return link_file[random_user]
+
 
 def group_followers(group_name):
     following_count = random.randint(150, 250)
@@ -265,11 +284,13 @@ def group_followers(group_name):
             random_wait(4,7)
             following_count -= follow_user()
 
+
 def save_user_link(user):
     link_file = open('database/subscription_list.txt', 'a')
     nickname = user.find_element(By.XPATH, ".//a[@role='link']")
     link_file.write(nickname.get_attribute('href') + '\n')
     link_file.close()
+
 
 def follow_user():
     try:
@@ -292,6 +313,7 @@ def follow_user():
         return temp
     except:
         return 0
+
 
 def take_account_data(data_file):
     file = open(data_file, 'r')
